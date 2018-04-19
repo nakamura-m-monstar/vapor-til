@@ -1,5 +1,5 @@
 import Vapor
-import FluentMySQL
+import FluentPostgreSQL
 final class Acronym: Codable {
     var id: Int?
     var short: String
@@ -9,6 +9,7 @@ final class Acronym: Codable {
         self.long = long
     }
 }
-extension Acronym: MySQLModel {}
+extension Acronym: PostgreSQLModel {}
 extension Acronym: Migration {}
 extension Acronym: Content {}
+extension Acronym: Parameter {}
