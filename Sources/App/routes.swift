@@ -19,6 +19,11 @@ public func routes(_ router: Router) throws {
     let acronymsController = AcronymsController()
     // 2
     try router.register(collection: acronymsController)
+    // 1
+    let usersController = UsersController()
+    // 2
+    try router.register(collection: usersController)
+    
 //    // 1
 //    router.post("api", "acronyms") { req -> Future<Acronym> in
 //        // 2

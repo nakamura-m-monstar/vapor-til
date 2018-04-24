@@ -15,6 +15,14 @@ public func configure(
     middlewares.use(DateMiddleware.self)
     middlewares.use(ErrorMiddleware.self)
     services.register(middlewares)
+    
+    // 1
+    var commandConfig = CommandConfig.default()
+    // 2
+    commandConfig.use(RevertCommand.self, as: "revert")
+    // 3
+    services.register(commandConfig)
+    
     // Configure a database
     var databases = DatabaseConfig()
     let databaseConfig = PostgreSQLDatabaseConfig(
@@ -29,7 +37,9 @@ public func configure(
     
     var migrations = MigrationConfig()
     // Step 5
+    migrations.add(model: User.self, database: .psql)
     migrations.add(model: Acronym.self, database: .psql)
+
     services.register(migrations)
     
 }
