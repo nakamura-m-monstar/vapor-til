@@ -22,6 +22,21 @@ struct AcronymsController: RouteCollection {
         
         acronymsRoutes.get(Acronym.parameter, "user",
                            use: getUserHandler)
+        
+        acronymsRoutes.post(Acronym.parameter,
+                            "categories",
+                            Category.parameter,
+                            use: addCategoriesHandler)
+        
+        acronymsRoutes.get(Acronym.parameter,
+                           "categories",
+                           use: getCategoriesHandler)
+        
+        acronymsRoutes.post(Acronym.parameter,
+                           "categories",
+                           Category.parameter,
+                           use: addCategoriesHandler)
+        
     }
     
     func getAllHandler(_ req: Request) throws -> Future<[Acronym]> {
@@ -31,9 +46,12 @@ struct AcronymsController: RouteCollection {
                        acronym: Acronym) throws -> Future<Acronym> {
         return acronym.save(on: req)
     }
+    
     func getHandler(_ req: Request) throws -> Future<Acronym> {
         return try req.parameter(Acronym.self)
     }
+    
+    
     func updateHandler(_ req: Request) throws -> Future<Acronym> {
         return try flatMap(to: Acronym.self,
                            req.parameter(Acronym.self),
@@ -84,5 +102,32 @@ struct AcronymsController: RouteCollection {
     }
         
     }
+    // 1
+    func addCategoriesHandler(
+        _ req: Request) throws -> Future<HTTPStatus> {
+        // 2
+        return try flatMap(to: HTTPStatus.self,
+                           req.parameter(Acronym.self),
+                           req.parameter(Category.self)) {
+                        acronym, category in
+                        // 3
+                        let pivot = try AcronymCategoryPivot(acronym.requireID(),
+                        category.requireID())
+                        // 4
+                        return pivot.save(on: req).transform(to: .created)
+        }
+    }
+    
+    // 1
+    func getCategoriesHandler(_ req: Request) throws -> Future<[Category]> {
+        // 2
+        return try req.parameter(Acronym.self).flatMap(to: [Category].self) { acronym in
+            return try acronym.categories.query(on: req).all()
+    }
+        
+    }
 
 }
+
+extension Acronym: Parameter{}
+

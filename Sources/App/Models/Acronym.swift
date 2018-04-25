@@ -14,12 +14,16 @@ final class Acronym: Codable {
 extension Acronym: PostgreSQLModel {}
 //extension Acronym: Migration {}
 extension Acronym: Content {}
-extension Acronym: Parameter {}
+//extension Acronym: Parameter {}
 extension Acronym {
     // 1
     var user: Parent<Acronym, User> {
         // 2
         return parent(\.userID)
+    }
+    var categories: Siblings<Acronym, Category, AcronymCategoryPivot>
+    {
+        return siblings()
     }
 }
 // 1
